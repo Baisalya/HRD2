@@ -57,8 +57,6 @@ class HomeActivity : AppCompatActivity(), HomeViewModel.CallBackLogin {
         Log.e("Current","ss "+current)
         val drawerLayout: DrawerLayout = findViewById(R.id.drawerLayout)
         val navigationView: NavigationView = findViewById(R.id.navigationView)
-        // Handle navigation item clicks
-
         // Add hamburger icon to open the drawer
         val actionBarDrawerToggle = ActionBarDrawerToggle(
             this,
