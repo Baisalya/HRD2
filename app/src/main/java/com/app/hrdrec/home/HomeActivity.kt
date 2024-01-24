@@ -3,6 +3,10 @@ package com.app.hrdrec.home
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
+import android.view.View
+import android.widget.ImageButton
+import android.widget.PopupMenu
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -38,22 +42,17 @@ class HomeActivity : AppCompatActivity(), HomeViewModel.CallBackLogin {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        binding.txtSignOut.setOnClickListener {
-
-            CommonMethods.showAlertYesNoMessage(this,"Are you sure you want to sign out"){
-
-                homeViewModel.sharedPreferences.clearPreference()
-
-                val intent = Intent(this, Login::class.java)
-                //  val intent = Intent(this, AddRoles::class.java)
-                startActivity(intent)
-                finish()
-            }
-        }
         binding.recyclerView.adapter = albumDataAdapter
         setObserver()
         homeViewModel.setCallBacks(this)
         homeViewModel.getModuleList()
+        //option
+        val btnOptionsMenu: ImageButton = findViewById(R.id.btnOptionsMenu)
+        btnOptionsMenu.setOnClickListener { view ->
+            showPopupMenu(view)
+        }
+    
+        ///
         val current= CommonMethods.getCurrentDateTime()
         Log.e("Current","ss "+current)
         val drawerLayout: DrawerLayout = findViewById(R.id.drawerLayout)
@@ -73,13 +72,6 @@ class HomeActivity : AppCompatActivity(), HomeViewModel.CallBackLogin {
                 //AlbumDetailActivity.launchActivity(this@ShowAlbumActivity,data)
                 val transaction = supportFragmentManager.beginTransaction()
                 when (data.name) {
-                   /* "Organization" -> {
-                        val organizationFragment = Organization()
-                        val bundle = Bundle()
-                        bundle.putSerializable("mObj", data)
-                        organizationFragment.arguments = bundle
-                        replaceFragment(organizationFragment)
-                    }*/
                     "Organization" -> {
                         // Create the OrganizationFragment and pass the data
                         val organizationFragment = Organization().apply {
@@ -102,10 +94,16 @@ class HomeActivity : AppCompatActivity(), HomeViewModel.CallBackLogin {
                     }
 
                     "Leave Management" -> {
-                        val intent = Intent(this@HomeActivity, Organization::class.java)
-                        intent.putExtra("mObj", data)
-                        startActivity(intent)
+                        val organizationFragment = Organization().apply {
+                            arguments = Bundle().apply {
+                                putSerializable("mObj", data)
+                            }
+                        }
 
+                        // Replace the current fragment with OrganizationFragment
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.frameContainer, organizationFragment)
+                            .commit()
                     }
 
                     "Leaves" -> {
@@ -150,10 +148,19 @@ class HomeActivity : AppCompatActivity(), HomeViewModel.CallBackLogin {
 
 
                     else -> {
+                        val organizationFragment = Organization().apply {
+                            arguments = Bundle().apply {
+                                putSerializable("mObj", data)
+                            }
+                        }
 
-                        val intent = Intent(this@HomeActivity, Organization::class.java)
+                        // Replace the current fragment with OrganizationFragment
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.frameContainer, organizationFragment)
+                            .commit()
+                      /*  val intent = Intent(this@HomeActivity, Organization::class.java)
                         intent.putExtra("mObj", data)
-                        startActivity(intent)
+                        startActivity(intent)*/
                     }
 
 
@@ -167,6 +174,42 @@ class HomeActivity : AppCompatActivity(), HomeViewModel.CallBackLogin {
         }
 
     }
+
+    private fun showPopupMenu(view: View) {
+        val popupMenu = PopupMenu(this, view)
+        popupMenu.inflate(R.menu.nav_menu) // Create a menu resource file (res/menu/your_popup_menu.xml)
+
+        popupMenu.setOnMenuItemClickListener { item: MenuItem ->
+            when (item.itemId) {
+                R.id.menu_item1 -> {
+                    // Handle option 1 click
+                    true
+                }
+                R.id.menu_item2 -> {
+                    // Handle option 2 click
+                    true
+                }
+                R.id.menu_item3 -> {
+                    // Handle option 3 click
+                    CommonMethods.showAlertYesNoMessage(this,"Are you sure you want to sign out"){
+
+                        homeViewModel.sharedPreferences.clearPreference()
+
+                        val intent = Intent(this, Login::class.java)
+                        //  val intent = Intent(this, AddRoles::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
+
+                    true
+                }
+                else -> false
+            }
+        }
+
+        popupMenu.show()
+    }
+
 
     private fun replaceFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
