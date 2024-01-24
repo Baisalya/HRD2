@@ -58,22 +58,6 @@ class HomeActivity : AppCompatActivity(), HomeViewModel.CallBackLogin {
         val drawerLayout: DrawerLayout = findViewById(R.id.drawerLayout)
         val navigationView: NavigationView = findViewById(R.id.navigationView)
         // Handle navigation item clicks
-        navigationView.setNavigationItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.menu_item1 -> {
-                    // Handle Item 1 click
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                    return@setNavigationItemSelectedListener true
-                }
-                R.id.menu_item2 -> {
-                    // Handle Item 2 click
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                    return@setNavigationItemSelectedListener true
-                }
-                // Add more cases as needed
-                else -> return@setNavigationItemSelectedListener false
-            }
-        }
 
         // Add hamburger icon to open the drawer
         val actionBarDrawerToggle = ActionBarDrawerToggle(
@@ -163,7 +147,7 @@ class HomeActivity : AppCompatActivity(), HomeViewModel.CallBackLogin {
 
             }
         })
-        binding.txtSignOut.setOnClickListener {
+        binding.btnDrawer.setOnClickListener {
             // Show the drawer before handling sign out
             drawerLayout.openDrawer(GravityCompat.START)
         }

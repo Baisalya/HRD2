@@ -9,4 +9,7 @@
     <string name="check_balance"><u>Check Leave Balance</u></string>
     <string name="navigation_drawer_open" />
     <string name="navigation_drawer_close" />
+    <string name="drawer_button_description" />
+    <string name="user_icon_description" />
+    <string name="options_menu_button_description" />
 </resources>
