@@ -8,6 +8,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import com.app.hrdrec.R
 import com.app.hrdrec.admin.Admin
 import com.app.hrdrec.databinding.ActivityHomeBinding
@@ -70,12 +71,27 @@ class HomeActivity : AppCompatActivity(), HomeViewModel.CallBackLogin {
             override fun onClick(data: ModuleData) {
                 Log.e("Data","onClick"+data.name)
                 //AlbumDetailActivity.launchActivity(this@ShowAlbumActivity,data)
+                val transaction = supportFragmentManager.beginTransaction()
                 when (data.name) {
+                   /* "Organization" -> {
+                        val organizationFragment = Organization()
+                        val bundle = Bundle()
+                        bundle.putSerializable("mObj", data)
+                        organizationFragment.arguments = bundle
+                        replaceFragment(organizationFragment)
+                    }*/
                     "Organization" -> {
-                        val intent = Intent(this@HomeActivity, Organization::class.java)
-                        intent.putExtra("mObj", data)
-                        startActivity(intent)
+                        // Create the OrganizationFragment and pass the data
+                        val organizationFragment = Organization().apply {
+                            arguments = Bundle().apply {
+                                putSerializable("mObj", data)
+                            }
+                        }
 
+                        // Replace the current fragment with OrganizationFragment
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.frameContainer, organizationFragment)
+                            .commit()
                     }
 
                     "Users", "User Administration" -> {
@@ -150,6 +166,13 @@ class HomeActivity : AppCompatActivity(), HomeViewModel.CallBackLogin {
             drawerLayout.openDrawer(GravityCompat.START)
         }
 
+    }
+
+    private fun replaceFragment(fragment: Fragment) {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.frameContainer, fragment)
+        transaction.addToBackStack(null)  // Optional: Add transaction to back stack
+        transaction.commit()
     }
 
     private fun setObserver() {

@@ -3,8 +3,12 @@ package com.app.hrdrec.organization
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.app.hrdrec.databinding.ActivityOrganizationBinding
 import com.app.hrdrec.home.HomeViewModel
 import com.app.hrdrec.home.getallmodules.ModuleData
@@ -15,7 +19,60 @@ import com.app.hrdrec.organization.holidaycalander.HolidayCalendar
 import com.app.hrdrec.organization.locations.Location
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+@AndroidEntryPoint
+class Organization : Fragment() {
 
+    //private val homeViewModel: HomeViewModel by viewModels()
+    private lateinit var mObj: ModuleData
+    private val binding by lazy { ActivityOrganizationBinding.inflate(layoutInflater) }
+
+    @Inject
+    lateinit var albumDataAdapter: OrganizationDataAdapter
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        mObj = arguments?.getSerializable("mObj") as ModuleData
+        binding.recyclerView.adapter = albumDataAdapter
+
+        albumDataAdapter.updateAlbumData(mObj.paths)
+
+        albumDataAdapter.setItemClick(object : ClickInterfaceOrgan<Paths> {
+            override fun onClick(data: Paths) {
+                Log.e("Data", "org" + data.name)
+
+                when (data.name) {
+                    "Locations" -> {
+                        val intent = Intent(requireContext(), Location::class.java)
+                        intent.putExtra("id", mObj.id)
+                        startActivity(intent)
+                    }
+
+                    "Holiday Calendars" -> {
+                        val admin = Intent(requireContext(), HolidayCalendar::class.java)
+                        admin.putExtra("mObj", data)
+                        startActivity(admin)
+                    }
+
+                    "Clients" -> {
+                        val intent = Intent(requireContext(), Clients::class.java)
+                        intent.putExtra("id", mObj.id)
+                        startActivity(intent)
+                    }
+                }
+            }
+        })
+    }
+}
+
+/*
 @AndroidEntryPoint
 class Organization : AppCompatActivity() {
 
@@ -74,7 +131,8 @@ class Organization : AppCompatActivity() {
         })
     }
 
-    /* val organization = findViewById<ImageButton>(R.id.locations)
+    */
+/* val organization = findViewById<ImageButton>(R.id.locations)
      organization.setOnClickListener {
          val intent = Intent(this, Location::class.java)
          startActivity(intent)
@@ -91,10 +149,12 @@ class Organization : AppCompatActivity() {
          val intent = Intent(this, HolidayCalendar::class.java)
          startActivity(intent)
      }
-*/
+*//*
+
 
 
 }
+*/
 
 
 
